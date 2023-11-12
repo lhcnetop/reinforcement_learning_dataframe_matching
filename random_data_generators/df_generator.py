@@ -1,5 +1,5 @@
 import polars as pl
-from type_generators.int_generator import *
+from  random_data_generators.type_generators.int_generator import *
 
 '''
 def generate_df(data_size:int)->pl.DataFrame:
@@ -21,12 +21,11 @@ def generate_df(data_size:int)->pl.DataFrame:
         "field2":get_list_of_random_correlated_integers(8,get_random_integer(4), data_size), 
         "field3":get_list_of_random_correlated_integers(10,get_random_integer(5), data_size), 
     }
-
     df=pl.DataFrame(pre_dataframe)
+    df=df.select(
+        pl.col('id'),
+        pl.col('field1').cast(pl.Utf8),
+        pl.col('field2').cast(pl.Utf8),
+        pl.col('field3').cast(pl.Utf8),
+                 )
     return df
-
-'''
-df=generate_df(pow(10,5))
-print(df)
-print(df.groupby(['field1']).count().sort(['count'],descending=True))
-'''
