@@ -1,14 +1,32 @@
 import polars as pl
-from random_data_generators.type_generators.string_generator import get_list_of_random_strings
+from type_generators.int_generator import *
 
-
+'''
 def generate_df(data_size:int)->pl.DataFrame:
     pre_dataframe={
-        "id":range(data_size),
-        "field1":get_list_of_random_strings(6,data_size),
-        "field2":get_list_of_random_strings(8,data_size), 
-        "field3":get_list_of_random_strings(10,data_size)
+        "id":range(data_size), 
+        "field1":get_list_of_random_strings(6, data_size), 
+        "field2":get_list_of_random_strings(8, data_size),  
+        "field3":get_list_of_random_strings(10, data_size)
     }
 
     df=pl.DataFrame(pre_dataframe)
     return df
+    '''
+
+def generate_df(data_size:int)->pl.DataFrame:
+    pre_dataframe={
+        "id":range(data_size), 
+        "field1":get_list_of_random_integers(5, data_size), 
+        "field2":get_list_of_random_correlated_integers(8,get_random_integer(4), data_size), 
+        "field3":get_list_of_random_correlated_integers(10,get_random_integer(5), data_size), 
+    }
+
+    df=pl.DataFrame(pre_dataframe)
+    return df
+
+'''
+df=generate_df(pow(10,5))
+print(df)
+print(df.groupby(['field1']).count().sort(['count'],descending=True))
+'''
