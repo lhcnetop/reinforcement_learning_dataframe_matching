@@ -76,6 +76,7 @@ class State:
             self.actions_taken[5], 
             self.actions_taken[6],
             self.actions_taken[7], 
+            self.actions_taken[8], 
             )
 #        print(state)
         return state
@@ -97,6 +98,7 @@ class State:
             Discrete(1),  #actions_taken[5]
             Discrete(1),  #actions_taken[6]
             Discrete(1),  #actions_taken[7]
+            Discrete(1),  #actions_taken[8]
             )
             )
         return observation_space
