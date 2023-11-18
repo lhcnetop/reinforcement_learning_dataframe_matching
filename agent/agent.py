@@ -8,10 +8,10 @@ from agent.learner import Learner
 ## Implementar conforme: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
 
 class Agent:
-    def __init__(self,
-                environment:gym.Env,
-                learner:Learner,
-                device:torch.device,
+    def __init__(self, 
+                environment:gym.Env, 
+                learner:Learner, 
+                device:torch.device, 
                 eps_decay:dict
                 ):
         self.environment=environment
@@ -20,7 +20,7 @@ class Agent:
         self.eps_decay=eps_decay
         self.steps_done=0
 
-    def select_action(self,state,decay_eps:bool=True):
+    def select_action(self, state, decay_eps:bool=True):
         sample = random.random()
         epsilon=self.get_epsilon()
         
@@ -36,9 +36,12 @@ class Agent:
             math.exp(-1. * self.steps_done / self.eps_decay['decay'])
         return eps_threshold
     
-    def select_policy_action(self,state):
+    def select_policy_action(self, state):
         with torch.no_grad():
-                return self.learner.policy_net(state).max(1)[1].view(1, 1)
+                return self.learner.policy_net(state).max(1)[1].view(1,  1)
     
     def select_random_action(self):
-        return torch.tensor([[self.environment.action_space.sample()]], device=self.device, dtype=torch.long)
+        return torch.tensor([[self.environment.action_space.sample()]],  device=self.device,  dtype=torch.long)
+
+    def select_custom_action(self,state):
+        return torch.tensor([[self.environment.action_space.sample()]],  device=self.device,  dtype=torch.long)

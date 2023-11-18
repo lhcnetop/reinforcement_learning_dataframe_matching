@@ -11,12 +11,12 @@ import numpy as np
 import gymnasium as gym
 
 
-plt.rcParams["figure.figsize"] = (10, 5)
+plt.rcParams["figure.figsize"] = (10,  5)
 
 class PolicyNetwork(nn.Module):
     """Parametrized Policy Network."""
 
-    def __init__(self, obs_space_dims: int, action_space_dims: int):
+    def __init__(self,  obs_space_dims: int,  action_space_dims: int):
         """Initializes a neural network that estimates the mean and standard deviation
          of a normal distribution from which an action is sampled from.
 
@@ -26,30 +26,30 @@ class PolicyNetwork(nn.Module):
         """
         super().__init__()
 
-        hidden_space1 = 16  # Nothing special with 16, feel free to change
-        hidden_space2 = 16  # Nothing special with 32, feel free to change
+        hidden_space1 = 16
+        hidden_space2 = 16
 
         # Shared Network
         self.shared_net = nn.Sequential(
-            nn.Linear(obs_space_dims, hidden_space1),
-            nn.Tanh(),
-            nn.Linear(hidden_space1, hidden_space2),
-            nn.Tanh(),
+            nn.Linear(obs_space_dims,  hidden_space1), 
+            nn.Tanh(), 
+            nn.Linear(hidden_space1,  hidden_space2), 
+            nn.Tanh(), 
         )
 
         # Policy Mean specific Linear Layer
         self.policy_action_net = nn.Sequential(
-            nn.Linear(hidden_space2, action_space_dims)
+            nn.Linear(hidden_space2,  action_space_dims)
         )
 
-        ## Como o problema é diferente, não precisaremos deste outro output
+        ## Como o problema é diferente,  não precisaremos deste outro output
         # Policy Std Dev specific Linear Layer
         #self.policy_stddev_net = nn.Sequential(
-        #    nn.Linear(hidden_space2, action_space_dims)
+        #    nn.Linear(hidden_space2,  action_space_dims)
         #)
 
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor]:
-        """Conditioned on the observation, returns the mean and standard deviation
+    def forward(self,  x: torch.Tensor) -> tuple[torch.Tensor]:
+        """Conditioned on the observation,  returns the mean and standard deviation
          of a normal distribution from which an action is sampled from.
 
         Args:
@@ -62,7 +62,7 @@ class PolicyNetwork(nn.Module):
         shared_features = self.shared_net(x.float())
 
         action_values = self.policy_action_net(shared_features)
-        ## Como o problema é diferente, não precisaremos deste outro output
+        ## Como o problema é diferente,  não precisaremos deste outro output
         #action_stddevs = torch.log(
         #    1 + torch.exp(self.policy_stddev_net(shared_features))
         #)

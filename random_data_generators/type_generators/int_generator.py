@@ -2,7 +2,7 @@ import random
 import numpy.random as nprand
 
 def get_list_of_random_correlated_integers(length:int, average_increment:float, size:int):
-    print(f'Inicializando array aleatorio correlacionado de {size} inteiros com tamanho de string: {length}, incremento médio: {average_increment}')
+    # print(f'Inicializando array aleatorio correlacionado de {size} inteiros com tamanho de string: {length}, incremento médio: {average_increment}')
     list_of_random_integers=[]
     seed=get_random_integer(length)
     list_of_random_integers.append(seed)
