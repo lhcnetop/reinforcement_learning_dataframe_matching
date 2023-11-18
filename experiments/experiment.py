@@ -114,7 +114,7 @@ class Experiment():
         print(f'Rodou em: {(end_time-start_time):0.2f}s')
 
 
-    def save_action_history(self, action, step_index, reward, total_discounted_reward):
+    def save_action_history(self, action, step_index, reward,penalty, total_discounted_reward):
         self.action_history.append({
                 'episode_type':self.episode_title, 
                 'episode_index':self.episode_index, 
@@ -122,6 +122,7 @@ class Experiment():
                 'step_index':step_index, 
                 'action':action, 
                 'reward':reward, 
+                'penalty':penalty,
                 'total_discounted_reward':total_discounted_reward
             })
 
@@ -208,7 +209,7 @@ class Experiment():
             observation,  reward,  terminated,  truncated,  _ = self.environment.step(action.item())
             
             total_discounted_reward+=pow(self.GAMMA, t)*reward
-            self.save_action_history(action=action.item(), step_index=t, reward=reward, total_discounted_reward=total_discounted_reward)
+            self.save_action_history(action=action.item(), step_index=t, reward=reward,penalty=self.environment.penalty, total_discounted_reward=total_discounted_reward)
             
             reward = torch.tensor([reward],  device=self.device)
             done = terminated or truncated

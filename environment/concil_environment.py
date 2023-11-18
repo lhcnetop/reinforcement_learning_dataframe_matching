@@ -25,7 +25,7 @@ class ConcilEnv(Env):
         self.custom_state.set_size_df_original(self.dataframe_height)
         self.custom_state.set_size_df_disturbed(self.dataframe_height)
         self.observation_space=self.custom_state.get_observation_space()        
-
+        self.penalty=0
         self.action_space=get_action_space()
         self.actions_array=get_actions_array()  
         self.wrong_match_penalty=options['wrong_match_penalty']      
@@ -88,7 +88,11 @@ class ConcilEnv(Env):
         print(matched_df.filter(pl.col('id')!=pl.col('disturbed_id')))
         '''
         endTime=time.time()
-        reward=self.get_reward(matched_df)-(endTime-startTime)
+        reward,penalty=self.get_reward(matched_df)
+        penalty+=(endTime-startTime)
+        reward+=(endTime-startTime)
+        self.penalty=penalty
+        #print(f'Reward: {reward}, Penalty:{penalty}')
         if self.df_matches is None:
            self.df_matches=matched_df
         else:
@@ -131,15 +135,15 @@ class ConcilEnv(Env):
     def get_reward(self, matched_df:pl.DataFrame):
         #print(self.wrong_match_penalty)
         if (not matched_df is None) & (matched_df.height>0):
-            reward = (matched_df
+            reward_column=(matched_df
                     .with_columns(
                         pl.struct(['id', 'disturbed_id'])
                         .apply(lambda x: 1 if (x['id']==x['disturbed_id']) else self.wrong_match_penalty)
                         .alias('reward')
                                 )
-                    .get_column('reward')
-                    .sum()
-                    )
-            return reward
+                    .get_column('reward'))
+            reward = reward_column.sum()
+            total_penalty=reward_column.to_frame().filter(pl.col('reward')<0).get_column('reward').sum()
+            return [reward,total_penalty]
         else:
-            return 0
+            return 0,0
