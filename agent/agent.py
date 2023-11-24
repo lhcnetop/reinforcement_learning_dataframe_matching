@@ -38,7 +38,7 @@ class Agent:
     
     def select_policy_action(self, state):
         with torch.no_grad():
-            return self.learner.policy_net(state).max(0)[1].view(1,  1)
+            return self.learner.policy_net(state).max(1)[1].view(1,  1)
             '''
             aux=self.learner.policy_net(state)
             aux2=aux.max(0)
