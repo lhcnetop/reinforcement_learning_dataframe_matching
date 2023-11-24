@@ -64,6 +64,7 @@ class Experiment():
         n_actions = self.environment.action_space.n
         # Get the number of state observations
         state,  info = self.environment.reset()
+        state=self.flatten_state(state)
         n_observations = len(state)
         
         self.learner=Learner(self.memory, n_observations,  n_actions, device, LR, GAMMA, TAU, BATCH_SIZE)
@@ -186,14 +187,13 @@ class Experiment():
             episode_rewards.append(episode_total_discounted_reward)
         return episode_rewards
             
-
-
     def run_episode(self, 
                     action_selection:str='eps_decay', 
                     with_training:bool=True
                     )->float:
         self.episode_index+=1
         state,  info = self.environment.reset()
+        state=self.flatten_state(state)
         state = torch.tensor(state,  dtype=torch.float32,  device=self.device).unsqueeze(0)
         total_discounted_reward=0
 
@@ -217,8 +217,10 @@ class Experiment():
             if terminated:
                 next_state = None
             else:
-                next_state = torch.tensor(observation,  dtype=torch.float32,  device=self.device).unsqueeze(0)
+                flattened_observation=self.flatten_state(observation)
+                next_state = torch.tensor(flattened_observation.clone().detach(),  dtype=torch.float32,  device=self.device).unsqueeze(0)
 
+            #next_state=self.flatten_state(next_state)
             # Store the transition in memory
             self.memory.push(state,  action,  next_state,  reward)
 
@@ -260,8 +262,20 @@ class Experiment():
             return experiment
         #raise CouldNotLoadJsonFile(message=f'Não foi possível carregar o arquivo {json_file_path} json para gerar um experimento')
 
+    def flatten_state(self,state):
+        flat_list = []
+        for row in state:
+            if isinstance(row,int):
+                row=[row]
+            elif isinstance(row,float):
+                row=[row]
+            flat_list += row
+        tensor=torch.tensor(flat_list,  device=self.device)
+        return tensor
 
 class CouldNotLoadJsonFile(Exception):
     def __init__(self,  message="Não foi possível carregar o arquivo json para gerar um experimento"):
         self.message = message
         super().__init__(self.message)
+
+

@@ -1,4 +1,4 @@
-from gymnasium.spaces import Box, Discrete, Tuple
+from gymnasium.spaces import Box, Discrete, Tuple,MultiBinary
 import polars as pl
 
 from environment.actions import get_action_space
@@ -22,7 +22,7 @@ class State:
             }
         )
 
-        
+        self.disturber_indicator_function=[0,0,0]
         self.step_index=0
         self.size_df_disturbed=0 ##<=10^6
         self.size_df_original=0 ##<=10^6
@@ -31,7 +31,7 @@ class State:
         self.percent_matched=0 ## >=0,  <=1
 
     def set_disturber(self, disturber:int):
-        self.disturber=disturber
+        self.disturber_indicator_function[disturber]=1
     
     def set_step_index(self, step_index:int):
         self.step_index=step_index
@@ -59,7 +59,6 @@ class State:
             #raise PercentNotInRangeError(percent)
         self.percent_matched=percent
 
-
     def get_observation(self):
         state=(
 #            self.size_df_disturbed,  ##Removendo os parametros que estão em outra escala
@@ -67,7 +66,7 @@ class State:
 #            self.size_df_pending_match,  ##Removendo os parametros que estão em outra escala
             self.avg_match_grade, 
             self.percent_matched, 
-            self.disturber,  ##Removendo os parametros que estão em outra escala
+            self.disturber_indicator_function,  ##Removendo os parametros que estão em outra escala
             self.actions_taken[0], 
             self.actions_taken[1], 
             self.actions_taken[2], 
@@ -89,7 +88,7 @@ class State:
 #            Discrete(self.size_df_disturbed), 
             Box(low=0, high=1), 
             Box(low=0, high=1), 
-            Discrete(3), 
+            MultiBinary(3), 
             Discrete(1),  #actions_taken[0]
             Discrete(1),  #actions_taken[1]
             Discrete(1),  #actions_taken[2]
