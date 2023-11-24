@@ -29,7 +29,6 @@ class PolicyNetwork(nn.Module):
         hidden_space1 = 16
         hidden_space2 = 16
 
-        # Shared Network
         self.shared_net = nn.Sequential(
             nn.Linear(obs_space_dims,  hidden_space1), 
             nn.Tanh(), 
@@ -37,36 +36,17 @@ class PolicyNetwork(nn.Module):
             nn.Tanh(), 
         )
 
-        # Policy Mean specific Linear Layer
         self.policy_action_net = nn.Sequential(
             nn.Linear(hidden_space2,  action_space_dims)
         )
 
-        ## Como o problema é diferente,  não precisaremos deste outro output
-        # Policy Std Dev specific Linear Layer
-        #self.policy_stddev_net = nn.Sequential(
-        #    nn.Linear(hidden_space2,  action_space_dims)
-        #)
 
     def forward(self,  x: torch.Tensor) -> tuple[torch.Tensor]:
-        """Conditioned on the observation,  returns the mean and standard deviation
-         of a normal distribution from which an action is sampled from.
-
-        Args:
-            x: Observation from the environment
-
-        Returns:
-            action_means: predicted mean of the normal distribution
-            action_stddevs: predicted standard deviation of the normal distribution
-        """
+        
         shared_features = self.shared_net(x.float())
 
         action_values = self.policy_action_net(shared_features)
-        ## Como o problema é diferente,  não precisaremos deste outro output
-        #action_stddevs = torch.log(
-        #    1 + torch.exp(self.policy_stddev_net(shared_features))
-        #)
-
+        
         return action_values
     
 

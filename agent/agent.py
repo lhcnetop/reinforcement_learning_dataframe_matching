@@ -38,7 +38,14 @@ class Agent:
     
     def select_policy_action(self, state):
         with torch.no_grad():
-                return self.learner.policy_net(state).max(1)[1].view(1,  1)
+            return self.learner.policy_net(state).max(0)[1].view(1,  1)
+            '''
+            aux=self.learner.policy_net(state)
+            aux2=aux.max(0)
+            aux4=aux2[1]
+            aux3=aux4.view(1,  1)
+            return aux3
+            '''
     
     def select_random_action(self):
         return torch.tensor([[self.environment.action_space.sample()]],  device=self.device,  dtype=torch.long)
