@@ -1,0 +1,20 @@
+{
+	"run_options":{
+                    "num_warmup_episodes":150,
+                    "train_test_cycle":[50,10],
+                    "num_cycles":3
+                },
+    "env_options":{
+    		"wrong_match_penalty":-100,
+    		"dataframe_height":10000
+    },
+    "disturb_function":"disturber1",
+    "REPLAY_MEMORY_SIZE":10000,
+	"BATCH_SIZE":128,
+	"GAMMA":0.8,
+	"EPS_START":0.9,
+	"EPS_END":0.05,
+	"EPS_DECAY":1000,
+	"TAU":0.001,
+	"LR":1e-4
+}
