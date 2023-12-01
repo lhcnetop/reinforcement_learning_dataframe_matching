@@ -59,3 +59,13 @@ class DisturbedDataframe():
         self.df=self.df.with_columns(
             pl.col(field).apply(lambda x: str(x).rstrip(chars) if rand.random()<=probability else str(x) )
         )
+
+    def trim_and_substitute_random_right(self, field:str, length:int, probability:float=1.0):
+        self.df=self.df.with_columns(
+            pl.col(field).apply(lambda x: (str(x)[:-length])+get_random_string(length) if rand.random()<=probability else str(x) )
+        )
+
+    def trim_and_substitute_random_left(self, field:str, length:int, probability:float=1.0):
+        self.df=self.df.with_columns(
+            pl.col(field).apply(lambda x: get_random_string(length)+(str(x)[length:]) if rand.random()<=probability else str(x) )
+        )

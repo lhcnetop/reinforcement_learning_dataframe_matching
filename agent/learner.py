@@ -18,10 +18,12 @@ class Learner():
                  learning_rate:float=1e-4, 
                  gamma:float=0.99, 
                  tau:float=0.005, 
-                 batch_size:int=128
+                 batch_size:int=128,
+                 hidden_layer1:int=64,
+                 hidden_layer2:int=64,
                  ):
-        self.policy_net = PolicyNetwork(observation_space_size,  action_space_size).to(device)
-        self.target_net = PolicyNetwork(observation_space_size,  action_space_size).to(device)
+        self.policy_net = PolicyNetwork(observation_space_size,  action_space_size,hidden_layer1,hidden_layer2).to(device)
+        self.target_net = PolicyNetwork(observation_space_size,  action_space_size,hidden_layer1,hidden_layer2).to(device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
         self.optimizer = optim.AdamW(self.policy_net.parameters(),  lr=learning_rate,  amsgrad=True)

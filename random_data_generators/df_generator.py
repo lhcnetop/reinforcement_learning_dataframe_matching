@@ -17,9 +17,9 @@ def generate_df(data_size:int)->pl.DataFrame:
 def generate_df(data_size:int)->pl.DataFrame:
     pre_dataframe={
         "id":range(data_size), 
-        "field1":get_list_of_random_integers(5, data_size), 
-        "field2":get_list_of_random_correlated_integers(8,get_random_integer(4), data_size), 
-        "field3":get_list_of_random_correlated_integers(10,get_random_integer(5), data_size), 
+        "field1":get_list_of_random_integers(4, data_size), 
+        "field2":get_list_of_random_correlated_integers(4,get_random_integer(3), data_size), 
+        "field3":get_list_of_random_correlated_integers(4,get_random_integer(4), data_size), 
     }
     df=pl.DataFrame(pre_dataframe)
     df=df.select(

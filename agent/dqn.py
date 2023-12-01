@@ -16,7 +16,7 @@ plt.rcParams["figure.figsize"] = (10,  5)
 class PolicyNetwork(nn.Module):
     """Parametrized Policy Network."""
 
-    def __init__(self,  obs_space_dims: int,  action_space_dims: int):
+    def __init__(self,  obs_space_dims: int,  action_space_dims: int, hidden_space1: int , hidden_space2: int):
         """Initializes a neural network that estimates the mean and standard deviation
          of a normal distribution from which an action is sampled from.
 
@@ -26,8 +26,9 @@ class PolicyNetwork(nn.Module):
         """
         super().__init__()
 
-        hidden_space1 = 16
-        hidden_space2 = 16
+#        hidden_space1 = 64
+#        hidden_space2 = 64
+#        hidden_space3 = 32
 
         self.shared_net = nn.Sequential(
             nn.Linear(obs_space_dims,  hidden_space1), 

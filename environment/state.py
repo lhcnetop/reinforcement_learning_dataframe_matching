@@ -22,7 +22,7 @@ class State:
             }
         )
 
-        self.disturber_indicator_function=[0,0,0]
+        self.disturber_indicator_function=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.step_index=0
         self.size_df_disturbed=0 ##<=10^6
         self.size_df_original=0 ##<=10^6
@@ -88,7 +88,7 @@ class State:
 #            Discrete(self.size_df_disturbed), 
             Box(low=0, high=1), 
             Box(low=0, high=1), 
-            MultiBinary(3), 
+            MultiBinary(15), 
             Discrete(1),  #actions_taken[0]
             Discrete(1),  #actions_taken[1]
             Discrete(1),  #actions_taken[2]

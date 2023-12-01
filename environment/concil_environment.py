@@ -35,7 +35,7 @@ class ConcilEnv(Env):
 
 
     def get_random_disturber(self):
-        aux_array=[disturb1,disturb2,disturb3]
+        aux_array=[disturb1,disturb2,disturb3,disturb4,disturb5,disturb6,disturb7,disturb8,disturb9,disturb10,disturb11,disturb12,disturb13,disturb14,disturb15]
         random_int=rand.choice(len(aux_array))
         self.distuber_index=random_int
         return aux_array[random_int]
@@ -44,9 +44,9 @@ class ConcilEnv(Env):
         super().reset(seed=self.seed[0], options=self.options)
         ### rand.seed=seed
         self.df_original=generate_df(self.dataframe_height)
-
-
         self.df_disturbed=self.get_random_disturber()(self.df_original).df
+        #print(f'Rodando com disturber: {self.distuber_index}')
+
         self.df_matches=None
         self.custom_state=State()
         self.custom_state.set_disturber(self.distuber_index)
@@ -90,7 +90,7 @@ class ConcilEnv(Env):
         endTime=time.time()
         reward,penalty=self.get_reward(matched_df)
         penalty+=(endTime-startTime)
-        reward+=(endTime-startTime)
+        #reward+=(endTime-startTime)
         self.penalty=penalty
         #print(f'Reward: {reward}, Penalty:{penalty}')
         if self.df_matches is None:

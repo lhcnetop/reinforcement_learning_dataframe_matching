@@ -17,6 +17,7 @@ def plot_rewards(total_reward_list:List[float], show_result=False):
         plt.title('Training...')
     plt.xlabel('Episode')
     plt.ylabel('Episode Total Discounted Reward')
+    plt.yscale(matplotlib.scale.LogScale)
     plt.plot(rewards.numpy())
     
     if len(rewards) >= 10:

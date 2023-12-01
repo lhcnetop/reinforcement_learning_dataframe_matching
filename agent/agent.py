@@ -51,4 +51,27 @@ class Agent:
         return torch.tensor([[self.environment.action_space.sample()]],  device=self.device,  dtype=torch.long)
 
     def select_custom_action(self,state):
-        return torch.tensor([[self.environment.action_space.sample()]],  device=self.device,  dtype=torch.long)
+        avg_match_grade=state[0][0]
+        percent_matched=state[0][1]
+        disturber_indicator_function=state[0][2:17]
+        actions_taken=state[0][17:26]
+        disturber_index=(disturber_indicator_function == 1).nonzero(as_tuple=True)[0].item()
+        if actions_taken[6]==0:
+            action_index=6
+        elif actions_taken[5]==0:
+            action_index=5
+        elif actions_taken[4]==0:
+            action_index=4
+        elif actions_taken[3]==0:
+            action_index=3
+        elif actions_taken[2]==0:
+            action_index=2
+        elif actions_taken[1]==0:
+            action_index=1
+        elif actions_taken[0]==0:
+            action_index=0
+        elif actions_taken[7]==0:
+            action_index=7
+        else:
+            action_index=8
+        return torch.tensor([[action_index]])

@@ -22,6 +22,8 @@ DEFAULT_EPS_DECAY = 100
 DEFAULT_TAU = 0.005
 DEFAULT_LR = 1e-4
 DEFAULT_REPLAY_MEMORY_SIZE=10000
+DEFAULT_HIDDENLAYER1_SIZE=64
+DEFAULT_HIDDENLAYER2_SIZE=64
 
 is_ipython = 'inline' in matplotlib.get_backend()
 plt.ion()
@@ -44,6 +46,8 @@ class Experiment():
                     EPS_DECAY:int=DEFAULT_EPS_DECAY, 
                     TAU:float=DEFAULT_TAU, 
                     LR:float=DEFAULT_LR, 
+                    hidden_layer1:int=DEFAULT_HIDDENLAYER1_SIZE,
+                    hidden_layer2:int=DEFAULT_HIDDENLAYER2_SIZE,
                 env_options:dict={}, 
                 run_options:dict={
                     'num_warmup_episodes':100, 
@@ -67,7 +71,7 @@ class Experiment():
         state=self.flatten_state(state)
         n_observations = len(state)
         
-        self.learner=Learner(self.memory, n_observations,  n_actions, device, LR, GAMMA, TAU, BATCH_SIZE)
+        self.learner=Learner(self.memory, n_observations,  n_actions, device, LR, GAMMA, TAU, BATCH_SIZE,hidden_layer1,hidden_layer2)
 
         self.agent=Agent(self.environment, self.learner, device, eps_decay={
             'start':EPS_START, 
@@ -88,6 +92,12 @@ class Experiment():
 
     def run(self):
         start_time=time.time()
+
+        #self.episode_title='human'
+        #human_action_choice_rewards=self.run_human_cycle(300)
+        #self.append_rewards(human_action_choice_rewards)
+        #self.append_errorbar(human_action_choice_rewards)
+
         self.episode_title='warmup'
         random_walk_rewards=self.warmup_replay_buffer(self.num_warmup_episodes)
         self.append_rewards(random_walk_rewards)
@@ -157,6 +167,7 @@ class Experiment():
     def render(self):
         plt.clf()
         plt.title('Training...')
+        #plt.yscale('log')
         plt.plot(self.rewards_tensor.numpy())
         x_column=self.df_errorbars.get_column('x').to_numpy()
         y_column=self.df_errorbars.get_column('y').to_numpy()
@@ -167,6 +178,9 @@ class Experiment():
     def warmup_replay_buffer(self, num_episodes_warmup):
         random_walk_rewards=self.run_batch_episodes(num_episodes_warmup, action_selection='random', with_training=False)
         return random_walk_rewards
+
+    def run_human_cycle(self, num_episodes):
+        return self.run_batch_episodes(num_episodes, action_selection='custom', with_training=False)
 
     def run_train_cycle(self, num_episodes):
         return self.run_batch_episodes(num_episodes, action_selection='eps_decay', with_training=True)
@@ -194,7 +208,7 @@ class Experiment():
         self.episode_index+=1
         state,  info = self.environment.reset()
         state=self.flatten_state(state)
-        state = torch.tensor(state,  dtype=torch.float32,  device=self.device).unsqueeze(0)
+        state = state.clone().detach().unsqueeze(0)
         total_discounted_reward=0
 
         for t in count():
@@ -202,9 +216,13 @@ class Experiment():
                 action= self.agent.select_random_action()
             elif action_selection=='learned':
                 action=self.agent.select_policy_action(state)
+            elif action_selection=='eps_decay':
+                action=self.agent.select_action(state)
             else:
-                action=self.agent.select_action(state) 
+                action=self.agent.select_custom_action(state)
+            
     #        action = select_action(state)
+            
             
             observation,  reward,  terminated,  truncated,  _ = self.environment.step(action.item())
             
@@ -218,7 +236,7 @@ class Experiment():
                 next_state = None
             else:
                 flattened_observation=self.flatten_state(observation)
-                next_state = torch.tensor(flattened_observation.clone().detach(),  dtype=torch.float32,  device=self.device).unsqueeze(0)
+                next_state = flattened_observation.clone().detach().unsqueeze(0)
 
             #next_state=self.flatten_state(next_state)
             # Store the transition in memory
@@ -256,6 +274,8 @@ class Experiment():
                 EPS_DECAY=json_spec['EPS_DECAY'], 
                 TAU=json_spec['TAU'], 
                 LR=json_spec['LR'], 
+                hidden_layer1=json_spec['hidden_layer1'], 
+                hidden_layer2=json_spec['hidden_layer2'], 
                 env_options=json_spec['env_options'], 
                 run_options=json_spec['run_options']
             )
